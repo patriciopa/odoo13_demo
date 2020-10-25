@@ -15,8 +15,7 @@ class AccountMove(models.Model):
         return _id
 
     def unlink_invoice(self):
-        _am = self.env['account.move'].search([])
-        _am.unlink()
+        self.env['account.move'].search([]).unlink()
 
     def insert_invoice(self, param):
         """ Inserta las lineas de factura de una factura que viene en param
@@ -50,10 +49,8 @@ class AccountMove(models.Model):
                     # account_invoice_line pero con id = 0 todavia no esta en la bd.
                     unused = line['id']
 
-                    # Todos los productos tienen que estar migrados
-                    # por ahora le pongo un producto cualquiera.
-#                    line_form.product_id = get_value(product_obj, line['product_id/id']) # para las pruebas le mando cualquiera
-                    line_form.product_id = product_obj.search([], limit=1)
+                    line_form.product_id = get_value(product_obj, line['product_id/id'])
+                    #line_form.product_id = product_obj.search([], limit=1) para pruebas
                     if line_form.product_id:
                         _logger.info('product %s', line_form.product_id.name)
 
@@ -68,20 +65,20 @@ class AccountMove(models.Model):
 
                     # todas las cuentas contables deben estar migradas, por ahora le
                     # pongo una cuenta cualquiera
-   #                line_form.account_id = get_value(account_obj, line['account_id/id'])
+#                   line_form.account_id = get_value(account_obj, line['account_id/id'])
                     line_form.account_id = account_obj.search([], limit=1)
                     if line_form.account_id:
                         _logger.info('account %s', line_form.account_id.name)
                     else:
                         _logger.info('NO account')
 
+            # salvar la factura completa en la bd
+            invoice = move_form.save()
+
+            # devolver los ids de todas las lineas del asiento.
+            return str(invoice.line_ids.ids)
+
         except Exception as ex:
             _logger.error('Error %s', (str(ex)))
             # ocurrio un error devolver el mensaje
             return str(ex)
-
-        # salvar la factura completa en la bd
-        invoice = move_form.save()
-
-        # devolver los ids de las lineas de factura que salve.
-        return str(invoice.invoice_line_ids.ids)
