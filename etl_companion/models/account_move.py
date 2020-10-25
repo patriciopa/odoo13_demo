@@ -53,6 +53,8 @@ class AccountMove(models.Model):
                     #line_form.product_id = product_obj.search([], limit=1) para pruebas
                     if line_form.product_id:
                         _logger.info('product %s', line_form.product_id.name)
+                    else:
+                        _logger.error('Product not found %s', line['product_id/id'])
 
                     line_form.discount = line['discount']
                     line_form.name = line['name']
