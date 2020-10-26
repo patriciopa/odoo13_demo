@@ -49,8 +49,8 @@ class AccountMove(models.Model):
                     # account_invoice_line pero con id = 0 todavia no esta en la bd.
                     unused = line['id']
 
-                    line_form.product_id = get_value(product_obj, line['product_id/id'])
-                    #line_form.product_id = product_obj.search([], limit=1) para pruebas
+                    #line_form.product_id = get_value(product_obj, line['product_id/id'])
+                    line_form.product_id = product_obj.search([], limit=1)
                     if line_form.product_id:
                         _logger.info('product %s', line_form.product_id.name)
                     else:
